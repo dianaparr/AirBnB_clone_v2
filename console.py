@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import re
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -115,16 +116,37 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        words = args.split()
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif words[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
+        # elif len(words) == 1:
+        #     new_instance = HBNBCommand.classes[args]()
+        else:
+            new_instance = HBNBCommand.classes[words[0]]()
+            new_instance.save()
+            print(len(words))
+            if len(words) > 1:
+                current_dict = storage.all()
+                key = words[0] + '.' + new_instance.id
+                for word in words:
+                    if re.search(('.*=".*"'), word):
+                        word_key = word.split('=')[0]
+                        word_value = word.split('=')[1]
+                        current_dict[key].__dict__[word_key] = eval(word_value)
+                    elif re.search(('.*=[0-9]*\.[0-9]*'), word):
+                        word_key = word.split('=')[0]
+                        word_value = word.split('=')[1]
+                        current_dict[key].__dict__[word_key] = eval(word_value)
+                    elif re.search(('.*=[0-9]*'), word):
+                        word_key = word.split('=')[0]
+                        word_value = word.split('=')[1]
+                        current_dict[key].__dict__[word_key] = eval(word_value)
+                storage.save()
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
