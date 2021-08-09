@@ -32,7 +32,7 @@ class TestConsole(unittest.TestCase):
         # for class_name in HBNBCommand().classes.keys():
         #     with patch('sys.stdout', new=StringIO()) as fd:
         #         HBNBCommand().onecmd("create " + class_name)
-        #     self.assertIn(class_name + '.' + fd.getvalue()[:-1], storage.all())
+        # self.assertIn(class_name + '.' + fd.getvalue()[:-1], storage.all())
         # with open(storage._FileStorage__file_path, "r") as f:
         #     test_dict = json.load(f)
         # for key in storage.all().keys():
@@ -40,11 +40,7 @@ class TestConsole(unittest.TestCase):
 
         # If the class name exist, check if recives and set extra values
         with patch('sys.stdout', new=StringIO()) as fd:
-            cmnd = 'create Place name="My_little_home" number_rooms=8 latitude=-122.5465416'
+            cmnd = 'create Place name="My_little_home"\
+            number_rooms=8 latitude=-122.5465416'
             HBNBCommand().onecmd(cmnd)
             self.assertIn('Place.' + fd.getvalue()[:-1], storage.all())
-        # with open(storage._FileStorage__file_path, "r") as f:
-        #     test_dict = json.load(f)['Place.' + fd.getvalue()[:-1]]
-        # x = storage.all()['Place.' + fd.getvalue()[:-1]]
-        # # extra_dict = {"name": "My_little_home", "number_rooms": 8, "latitude": 122.5465416}
-        # self.assertAlmostEqual(x, test_dict)
