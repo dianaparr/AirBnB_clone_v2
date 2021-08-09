@@ -127,26 +127,21 @@ class HBNBCommand(cmd.Cmd):
             new_instance = HBNBCommand.classes[words[0]]()
             new_instance.save()
             if len(words) > 1:
-                current_dict = storage.all()
+                pre_dict = storage.all()
                 key = words[0] + '.' + new_instance.id
                 for word in words:
                     # regexp for strings
                     if re.search(('.*=".*"'), word):
                         word_key = word.split('=')[0]
                         word_value = word.split('=')[1]
-                        if word_value.find('_') != -1:
-                            word_value = word_value.replace('_', ' ')
-                        current_dict[key].__dict__[word_key] = eval(word_value)
-                    # regexp for floats
-                    elif re.search(('.*=[0-9]*\.[0-9]*'), word):
+                        word_value = word_value.replace('_', ' ')
+                        pre_dict[key].__dict__[word_key] = eval(word_value)
+                    # regexp for floats && integers
+                    elif re.search(('.*=[0-9]*\\.[0-9]*'), word) or re.search(
+                         ('.*=[0-9]*'), word):
                         word_key = word.split('=')[0]
                         word_value = word.split('=')[1]
-                        current_dict[key].__dict__[word_key] = eval(word_value)
-                    # regexp for numbers
-                    elif re.search(('.*=[0-9]*'), word):
-                        word_key = word.split('=')[0]
-                        word_value = word.split('=')[1]
-                        current_dict[key].__dict__[word_key] = eval(word_value)
+                        pre_dict[key].__dict__[word_key] = eval(word_value)
                 storage.save()
         print(new_instance.id)
 
@@ -343,6 +338,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
