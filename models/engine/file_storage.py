@@ -10,23 +10,18 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        # print("cls: {}".format(cls))
-        # print("FS: {}".format(FileStorage.__objects))
-        if FileStorage.__objects is None:
+        if cls is None:
             return FileStorage.__objects
         else:
             new_dict = {}
-            for obj in FileStorage.__objects.keys():
-                x = str(cls).split('.')[-1][:-2]
-                if obj.split('.')[0] == x:
+            for obj, value in FileStorage.__objects.items():
+                if cls.__name__ == value.__class__.__name__:
                     new_dict[obj] = FileStorage.__objects[obj]
             return new_dict
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
-        # self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
-        FileStorage.__objects.update({"{}.{}".format(
-            obj.__class__.__name__, obj.id): obj})
+        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
 
     def save(self):
         """Saves storage dictionary to file"""
@@ -39,9 +34,10 @@ class FileStorage:
 
     def delete(self, obj=None):
         """ Deletes a object from __objects """
-        key = obj.__class__.__name__ + "." + obj.id
-        # print("obj: {}".format(obj.__class__.__name__))
-        return FileStorage.__objects.pop(key)
+        if obj is not None:
+            key = obj.__class__.__name__ + "." + obj.id
+            FileStorage.__objects.pop(key)
+            self.save()
 
     def reload(self):
         """Loads storage dictionary from file"""
