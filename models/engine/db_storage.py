@@ -4,6 +4,14 @@
 from sqlalchemy import (create_engine)
 from os import getenv
 from models.base_model import Base
+from sqlalchemy.orm import sessionmaker, scope_session
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
+
 
 class DBStorage():
     """ Class DBStorage"""
@@ -12,29 +20,33 @@ class DBStorage():
 
     def __init__(self):
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
-            getenv('HBNB_MYSQL_USER'), getenv('HBNB_MYSQL_PWD'), getenv('HBNB_MYSQL_HOST'), getenv('HBNB_MYSQL_DB')), pool_pre_ping=True)
+            getenv('HBNB_MYSQL_USER'), getenv('HBNB_MYSQL_PWD'), getenv(
+                'HBNB_MYSQL_HOST'), getenv('HBNB_MYSQL_DB')),
+                pool_pre_ping=True)
 
         if getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        Session = sessionmaker(bind=self.__engine)
-        # create a Session
-        __session = Session()
         if cls is None:
-            class_list = ['User', 'State', 'City', 'Amenity', 'Place', 'Review']
+            cls_list = ['User', 'State', 'City', 'Amenity', 'Place', 'Review']
             new_dict = {}
-            for class_name in class_list:
-                query = __session.query(class_name).all()
-                for record in query:
-                    print("Hola")
+            for class_name in cls_list:
+                query = self.__session.query(class_name).all()
+            print("Hola")
 
+    def new(self, obj):
+        self.__session.add(obj)
 
-        if cls is None:
-            return FileStorage.__objects
-        else:
-            new_dict = {}
-            for obj, value in FileStorage.__objects.items():
-                if cls.__name__ == value.__class__.__name__:
-                    new_dict[obj] = FileStorage.__objects[obj]
-            return new_dict
+    def save(self):
+        self.__session.commit()
+
+    def delete(self, obj=None):
+        if obj is not None:
+            self.__session.delete(obj)
+
+    def reload(self):
+        Base.metadata.create_all(self.__engine)
+        session_fact = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scope_session(session_fact)
+        self.__session = Session()
