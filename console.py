@@ -125,24 +125,23 @@ class HBNBCommand(cmd.Cmd):
             return
         else:
             new_instance = HBNBCommand.classes[words[0]]()
-            new_instance.save()
             if len(words) > 1:
                 pre_dict = storage.all()
                 key = words[0] + '.' + new_instance.id
+                word_key = word_value = ''
                 for word in words:
                     # regexp for strings
                     if re.search(('.*=".*"'), word):
                         word_key = word.split('=')[0]
                         word_value = word.split('=')[1]
-                        word_value = word_value.replace('_', ' ')
-                        pre_dict[key].__dict__[word_key] = eval(word_value)
+                        word_value = eval(word_value.replace('_', ' '))
                     # regexp for floats && integers
                     elif re.search(('.*=[0-9]*\\.[0-9]*'), word) or re.search(
                          ('.*=[0-9]*'), word):
                         word_key = word.split('=')[0]
-                        word_value = word.split('=')[1]
-                        pre_dict[key].__dict__[word_key] = eval(word_value)
-                storage.save()
+                        word_value = eval(word.split('=')[1])
+                    setattr(new_instance, word_key, word_value)
+            new_instance.save()
         print(new_instance.id)
 
     def help_create(self):
@@ -225,11 +224,11 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)

@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 """This module defines a class to manage db storage for hbnb clone"""
 
-from sqlalchemy import create_engine
-from sqlalchemy import scope_session
-from sqlalchemy.orm import sessionmakers
-# from sqlalchemy import orm
 from os import getenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm.session import Session
+from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
 from models.user import User
 from models.place import Place
@@ -31,11 +30,18 @@ class DBStorage():
 
     def all(self, cls=None):
         if cls is None:
-            cls_list = ['User', 'State', 'City', 'Amenity', 'Place', 'Review']
-            new_dict = {}
+            # [User, State, City, Amenity, Place, Review]
+            cls_list = [State, City]
+            new_list = []
             for class_name in cls_list:
-                query = self.__session.query(class_name).all()
-            print("Hola")
+                new_list += self.__session.query(class_name).all()
+        else:
+            new_list += self.__session.query(cls).all()
+        new_dict = {}
+        for obj in new_list:
+            key = obj.__class__.__name__ + '.' + str(obj.id)
+            new_dict[key] = obj
+        return new_dict
 
     def new(self, obj):
         self.__session.add(obj)
@@ -50,5 +56,5 @@ class DBStorage():
     def reload(self):
         Base.metadata.create_all(self.__engine)
         session_fact = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        Session = orm.scope_session(session_fact)
+        Session = scoped_session(session_fact)
         self.__session = Session()
