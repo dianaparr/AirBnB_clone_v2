@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 """This module defines a class to manage db storage for hbnb clone"""
 
-from sqlalchemy import (create_engine)
+from sqlalchemy import create_engine
+from sqlalchemy import scope_session
+from sqlalchemy.orm import sessionmakers
+# from sqlalchemy import orm
 from os import getenv
 from models.base_model import Base
-from sqlalchemy.orm import sessionmaker, scope_session
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -48,5 +50,5 @@ class DBStorage():
     def reload(self):
         Base.metadata.create_all(self.__engine)
         session_fact = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        Session = scope_session(session_fact)
+        Session = orm.scope_session(session_fact)
         self.__session = Session()
