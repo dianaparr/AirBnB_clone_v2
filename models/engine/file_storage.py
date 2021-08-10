@@ -36,7 +36,8 @@ class FileStorage:
         """ Deletes a object from __objects """
         if obj is not None:
             key = obj.__class__.__name__ + "." + obj.id
-            FileStorage.__objects.pop(key)
+            if key in FileStorage.__objects.keys():
+                FileStorage.__objects.pop(key)
             self.save()
 
     def reload(self):
