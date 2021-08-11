@@ -30,8 +30,8 @@ class DBStorage():
 
     def all(self, cls=None):
         if cls is None:
-            # [User, State, City, Amenity, Place, Review]
-            cls_list = [State, City, User]
+            #  [User, State, City, Amenity, Place, Review]
+            cls_list = [User, State, City, Place, Review]
             new_list = []
             for class_name in cls_list:
                 new_list += self.__session.query(class_name).all()
