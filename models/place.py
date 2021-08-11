@@ -22,7 +22,7 @@ class Place(BaseModel, Base):
     city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
     user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     name = Column(String(128), nullable=False)
-    description = Column(String(1024), nullable=True)
+    description = Column(String(1024))
     number_rooms = Column(Integer, default=0, nullable=False)
     number_bathrooms = Column(Integer, default=0, nullable=False)
     max_guest = Column(Integer, default=0, nullable=False)
@@ -53,19 +53,24 @@ class Place(BaseModel, Base):
         @property
         def amenities(self):
             """
-            getter attribute cities that returns the list of Review instances
-            with state_id equals to the current Place.id
+            Getter attribute amenities that returns the list of Amenity
+            instances based on the attribute amenity_ids that contains all
+            Amenity.id linked to the Place
             """
             from models.amenity import Amenity
             from models import storage
-            new_list = []
-            for value in storage.all(Amenity).values():
-                if value.id in amenities.id:
-                    new_list.append(value)
-            return new_list
+            # new_list = []
+            # for value in storage.all(Amenity).values():
+            #     if value.id in amenities.id:
+            #         new_list.append(value)
+            # return new_list
+            return self.amenity_ids
 
         @amenities.setter
         def amenities(self, value):
+            """Setter attribute amenities that handles append method for
+            adding an Amenity.id to the attribute amenity_ids. This method
+            should accept only Amenity object, otherwise, do nothing"""
             from models.amenity import Amenity
 
             if isinstance(value, Amenity):
