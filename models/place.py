@@ -3,12 +3,14 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship, backref
+from os import getenv
 
-place_amenity = Table('association', Base.metadata,
+metadata = Base.metadata
+place_amenity = Table('place_amenity', metadata,
                       Column('place_id', String(60), ForeignKey(
-                          'places.id'), primary_key=True),
+                          'places.id'), nullable=False),
                       Column('amenity_id', String(60), ForeignKey(
-                          'amenities.id'), primary_key=True))
+                          'amenities.id'), nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -28,41 +30,42 @@ class Place(BaseModel, Base):
     longitude = Column(Float)
     amenity_ids = []
 
-    reviews = relationship('Review', cascade="all, delete", backref='place')
-    amenities = relationship(
-        'Amenity', secondary=place_amenity, viewonly=False)
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        reviews = relationship('Review', cascade="all, delete", backref='place')
+        amenities = relationship(
+            'Amenity', secondary=place_amenity, viewonly=False)
+    else:
+        @property
+        def reviews(self):
+            """
+            getter attribute cities that returns the list of Review instances
+            with state_id equals to the current Place.id
+            """
+            from models.review import Review
+            from models import storage
+            new_list = []
+            for key, value in storage.all(Review).items():
+                if self.id == value.place_id:
+                    new_list.append(value)
+            return new_list
 
-    @property
-    def reviews(self):
-        """
-        getter attribute cities that returns the list of Review instances
-        with state_id equals to the current Place.id
-        """
-        from models.review import Review
-        from models import storage
-        new_list = []
-        for key, value in storage.all(Review).items():
-            if self.id == value.state_id:
-                new_list.append(value)
-        return new_list
+        @property
+        def amenities(self):
+            """
+            getter attribute cities that returns the list of Review instances
+            with state_id equals to the current Place.id
+            """
+            from models.amenity import Amenity
+            from models import storage
+            new_list = []
+            for key, value in storage.all(Amenity).items():
+                if self.id == value.id:
+                    new_list.append(value)
+            return new_list
 
-    @property
-    def amenities(self):
-        """
-        getter attribute cities that returns the list of Review instances
-        with state_id equals to the current Place.id
-        """
-        from models.amenity import Amenity
-        from models import storage
-        new_list = []
-        for key, value in storage.all(Amenity).items():
-            if self.id == value.id:
-                new_list.append(value)
-        return new_list
+        @amenities.setter
+        def amenities(self, value):
+            from models.amenity import Amenity
 
-    @amenities.setter
-    def amenities(self, value):
-        from models.amenity import Amenity
-
-        if value.__class__.__name__ == 'Amenity':
-            self.amenity_ids.append(value.id)
+            if value.__class__.__name__ == 'Amenity':
+                self.amenity_ids.append(value.id)
