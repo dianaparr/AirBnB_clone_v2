@@ -29,10 +29,10 @@ class DBStorage():
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
+        new_list = []
         if cls is None:
             #  [User, State, City, Amenity, Place, Review]
             cls_list = [User, State, City, Amenity, Place, Review]
-            new_list = []
             for class_name in cls_list:
                 new_list += self.__session.query(class_name).all()
         else:

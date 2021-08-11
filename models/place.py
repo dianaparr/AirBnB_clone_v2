@@ -56,7 +56,7 @@ class Place(BaseModel, Base):
         from models import storage
         new_list = []
         for key, value in storage.all(Amenity).items():
-            if self.id == value.state_id:
+            if self.id == value.id:
                 new_list.append(value)
         return new_list
 
