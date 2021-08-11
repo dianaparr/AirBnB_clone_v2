@@ -8,9 +8,9 @@ from os import getenv
 metadata = Base.metadata
 place_amenity = Table('place_amenity', metadata,
                       Column('place_id', String(60), ForeignKey(
-                          'places.id'), nullable=False),
+                          'places.id'), primary_key=True, nullable=False),
                       Column('amenity_id', String(60), ForeignKey(
-                          'amenities.id'), nullable=False))
+                          'amenities.id'), primary_key=True, nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -34,7 +34,7 @@ class Place(BaseModel, Base):
         reviews = relationship(
             'Review', cascade="all, delete", backref='place')
         amenities = relationship(
-            'Amenity', secondary=place_amenity, viewonly=False)
+            'Amenity', secondary='place_amenity', viewonly=False)
     else:
         @property
         def reviews(self):
@@ -59,8 +59,8 @@ class Place(BaseModel, Base):
             from models.amenity import Amenity
             from models import storage
             new_list = []
-            for key, value in storage.all(Amenity).items():
-                if self.id == value.id:
+            for value in storage.all(Amenity).values():
+                if value.id in amenities.id:
                     new_list.append(value)
             return new_list
 
@@ -68,5 +68,5 @@ class Place(BaseModel, Base):
         def amenities(self, value):
             from models.amenity import Amenity
 
-            if value.__class__.__name__ == 'Amenity':
+            if isinstance(value, Amenity):
                 self.amenity_ids.append(value.id)
