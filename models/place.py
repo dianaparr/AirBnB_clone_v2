@@ -53,16 +53,10 @@ class Place(BaseModel, Base):
         @property
         def amenities(self):
             """
-            getter attribute cities that returns the list of Review instances
-            with state_id equals to the current Place.id
+            getter attribute amenities that returns the list of
+            amenity_ids
             """
-            from models.amenity import Amenity
-            from models import storage
-            new_list = []
-            for key, value in storage.all(Amenity).items():
-                if self.id == value.id:
-                    new_list.append(value)
-            return new_list
+            return self.amenity_ids
 
         @amenities.setter
         def amenities(self, value):
