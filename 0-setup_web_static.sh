@@ -9,13 +9,7 @@ fi
 mkdir -p /data/web_static/releases/test/
 mkdir -p /data/web_static/shared/
 # Step 3: Create fake file HTML
-echo "<html>
-  <head>
-  </head>
-  <body>
-    Holberton School
-  </body>
-</html>" > /data/web_static/releases/test/index.html
+echo -e "<html>\n\t<head>\n\t</head>\n\t<body>\n\t\tHolberton School\n\t</body>\n</html>" > /data/web_static/releases/test/index.html
 # Step 4: Create symbolic link, If the symbolic link already exists,
 # it should be deleted and recreated every time the script is ran.
 ln -sf /data/web_static/releases/test/ /data/web_static/current
