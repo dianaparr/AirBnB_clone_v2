@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 # Install nginx web server
 # Step 1: Install nginx: Update apt packaging system
-if [ "$(command -v nginx)" == 1 ]; then
+if [ ! -x /usr/sbin/nginx ]; then
     sudo apt-get -y update
     sudo apt-get -y install nginx
 fi
 # Step 2: Create directories
-mkdir -p /data/
-mkdir -p /data/web_static/
-mkdir -p /data/web_static/releases/
 mkdir -p /data/web_static/shared/
 mkdir -p /data/web_static/releases/test/
 # Step 3: Create fake file HTML
