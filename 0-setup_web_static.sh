@@ -6,8 +6,11 @@ if [ "$(command -v nginx)" == 1 ]; then
     sudo apt-get -y install nginx
 fi
 # Step 2: Create directories
-mkdir -p /data/web_static/releases/test/
+mkdir -p /data/
+mkdir -p /data/web_static/
+mkdir -p /data/web_static/releases/
 mkdir -p /data/web_static/shared/
+mkdir -p /data/web_static/releases/test/
 # Step 3: Create fake file HTML
 echo -e "<html>\n\t<head>\n\t</head>\n\t<body>\n\t\tHolberton School\n\t</body>\n</html>" > /data/web_static/releases/test/index.html
 # Step 4: Create symbolic link, If the symbolic link already exists,
