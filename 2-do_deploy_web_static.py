@@ -34,37 +34,38 @@ def do_deploy(archive_path):
     """
     if not isfile(archive_path):
         return False
-    split_path = archive_path.split('/')[1].split('.')[0]
+    split_path = archive_path.split('/')[1]
+    split_only_name = split_path.split('.')[0]
     # Uploading file
     file_up = put(archive_path, '/tmp/')
     if file_up.failed:
         return False
     # Create path where uncompress file
     path_create = run('mkdir -p /data/web_static/releases/{}'.format(
-        split_path))
+        split_only_name))
     if path_create.failed:
         return False
     # Uncompress the archive
     uncomp_file = run(
-        'tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}'.format(
-            split_path, split_path))
+        'tar -xzf /tmp/{} -C /data/web_static/releases/{}'.format(
+            split_path, split_only_name))
     if uncomp_file.failed:
         return False
     # Delete the file from the server
-    delete_file = run('rm /tmp/{}.tgz'.format(split_path))
+    delete_file = run('rm /tmp/{}'.format(split_path))
     if delete_file.failed:
         return False
     # Move the file to the rute create in path_create
     move_file = run(
         'mv /data/web_static/releases/{}/web_static/* \
             /data/web_static/releases/{}/'.format(
-            split_path, split_path))
+            split_only_name, split_only_name))
     if move_file.failed:
         return False
     # Delete the empty (now) directory
     delete_folder = run(
         'rm -rf /data/web_static/releases/{}/web_static'.format(
-            split_path))
+            split_only_name))
     if delete_folder.failed:
         return False
     # Delete symbolic link (current)
@@ -74,7 +75,7 @@ def do_deploy(archive_path):
     # Create new symbolic link
     new_link = run(
         'ln -s /data/web_static/releases/{} /data/web_static/current'.format(
-            split_path))
+            split_only_name))
     if new_link.failed:
         return False
 
