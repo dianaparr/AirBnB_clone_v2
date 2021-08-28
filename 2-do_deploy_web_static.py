@@ -57,7 +57,7 @@ def do_deploy(archive_path):
     # Move the file to the rute create in path_create
     move_file = run(
         'mv /data/web_static/releases/{}/web_static/* \
-            /data/web_static/releases/{}'.format(
+            /data/web_static/releases/{}/'.format(
             split_path, split_path))
     if move_file.failed:
         return False
