@@ -58,3 +58,10 @@ class DBStorage():
         session_fact = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(session_fact)
         self.__session = Session()
+
+    def close(self):
+        """ Function that called to the remove() method on the
+        private session attribute (self.__session).
+        This method call first to Session.close() which removes
+        all ORM-mapped objects from the session """
+        self.__session.remove()
