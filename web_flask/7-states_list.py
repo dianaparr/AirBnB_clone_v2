@@ -15,6 +15,7 @@ def all_states():
     is_states = storage.all(State).values()
     return render_template('7-states_list.html', states=is_states)
 
+
 @app.teardown_appcontext
 def reset_session(exception):
     """ This function use the handler teardown_appcontext to
