@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Module called 7-states_list """
+""" Module called 7-states_list"""
 from flask import Flask, render_template
 from models import storage
 from models.state import State
