@@ -64,4 +64,4 @@ class DBStorage():
         private session attribute (self.__session).
         This method call first to Session.close() which removes
         all ORM-mapped objects from the session """
-        self.__session.remove()
+        self.__session.close()
