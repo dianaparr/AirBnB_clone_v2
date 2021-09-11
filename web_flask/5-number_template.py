@@ -53,7 +53,7 @@ def is_number_template(n):
         is a number.
         Use a converter to specify the type of the argument:
             int -> accepts positive integers (no float)
-        Use of the Jinja2 templates.    """
+        Use of the Jinja2 templates """
     return render_template('5-number.html', number=n)
 
 if __name__ == "__main__":
